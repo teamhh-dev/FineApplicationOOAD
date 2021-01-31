@@ -53,24 +53,14 @@ public class BackupView extends JPanel
         local.setForeground(Color.WHITE);
         local.addMouseListener(new ButtonHoverListener(local));
 
-//        iconUrl = getClass().getResource("AppData/drive.png");
-//        icon = new ImageIcon(iconUrl);
-//
-//        drive = new JButton("Drive", icon);
-//        drive.setBorder(null);
-//        drive.setBackground(Color.GRAY);
-//        drive.setFont(titleFont);
-//        drive.setForeground(Color.WHITE);
-//        drive.addMouseListener(new ButtonHoverListener(drive));
+
 
         local.setAlignmentX(Component.CENTER_ALIGNMENT);
-//        drive.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         add(Box.createRigidArea(new Dimension(0, 200)));
 
         add(local);
-//        add(Box.createRigidArea(new Dimension(0, 40)));
-//        add(drive);
+
 
     }
 
