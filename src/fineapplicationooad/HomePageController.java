@@ -8,9 +8,16 @@ package fineapplicationooad;
 import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
 /**
  *
@@ -35,7 +42,7 @@ public class HomePageController
 
         while (this.dao.databaseStatus != true)
         {
-            this.dao=new Database();
+            this.dao = new Database();
             JOptionPane.showMessageDialog(this.view.frame, "No database connectivity!\nStart MySql from XAMMP'", "No database connectivity!", JOptionPane.WARNING_MESSAGE);
 
         }
@@ -184,6 +191,75 @@ public class HomePageController
             {
                 CardLayout layout = (CardLayout) view.contentPanel.getLayout();
                 layout.show(view.contentPanel, "Backup");
+            }
+        });
+
+        this.backup.view.local.addActionListener(new ActionListener()
+        {
+
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                LocalDateTime dateAndTime = LocalDateTime.now();
+
+                DateTimeFormatter formatting = DateTimeFormatter.ofPattern("dd-MM-yyyy_HH.mm");
+
+                String formattedDate = dateAndTime.format(formatting);
+
+                String path = null;
+                JFileChooser localBackupPath = new JFileChooser("./");
+                localBackupPath.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+                localBackupPath.showSaveDialog(view.frame);
+
+                File f = localBackupPath.getSelectedFile();
+                path = f.getAbsolutePath();
+                path = path.replace('\\', '/');
+
+                path += ("/" + formattedDate + "_database_backup.sql");
+
+                path = path.replace("//", "/");
+
+
+                try
+                {
+                    String backupCommand = "C:/xampp/mysql/bin/mysqldump.exe -uroot  --add-drop-database -B hamzaalidatabase -r" + path;
+
+                    int processComplete=-1;
+                    Process runtime = Runtime.getRuntime().exec(backupCommand);
+                    
+                    BufferedReader reader
+                            = new BufferedReader(new InputStreamReader(runtime.getInputStream()));
+                    while ((reader.readLine()) != null)
+                    {
+                        processComplete = runtime.waitFor();
+                        System.out.println(processComplete);
+                    }
+                    if (processComplete == -1)
+                    {
+                        URL iconURL = getClass().getResource("AppData/add.png");
+                        ImageIcon icon = new ImageIcon(iconURL);
+                        JOptionPane.showMessageDialog(view.frame, "Backup Created Succesfully", "Sussessfuly Created!", JOptionPane.OK_OPTION, icon);
+
+                    } else
+                    {
+                        JOptionPane.showMessageDialog(view.frame, "Error Creating Backup", "Backup Error!", JOptionPane.WARNING_MESSAGE);
+
+                    }
+                } catch (Exception ex)
+                {
+                    JOptionPane.showMessageDialog(view.frame, "Error Creating Backup", "Backup Error!", JOptionPane.WARNING_MESSAGE);
+
+                }
+            }
+        });
+        this.backup.view.drive.addActionListener(new ActionListener()
+        {
+
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                System.out.println("drive");
             }
         });
     }
