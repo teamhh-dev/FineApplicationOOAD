@@ -44,8 +44,10 @@ public class HomePageView
     JButton addCustomer;
     JButton viewRecord;
     JButton addTransaction;
+    JButton updateDeleteTransaction;
+    
     JButton backup;
-    int menuPanelWidth=275;
+    int menuPanelWidth=320;
     
     public HomePageView()
     {
@@ -112,6 +114,9 @@ public class HomePageView
 
         menuPanel.add(addTransaction);
         menuPanel.add(Box.createRigidArea(new Dimension(0, 30)));
+        
+        menuPanel.add(updateDeleteTransaction);
+        menuPanel.add(Box.createRigidArea(new Dimension(0, 30)));
 
         menuPanel.add(backup);
         menuPanel.add(Box.createRigidArea(new Dimension(0, 30)));
@@ -166,6 +171,14 @@ public class HomePageView
             addTransaction.setBorder(null);
             addTransaction.setFont(buttonsFont);
             addTransaction.setForeground(Color.WHITE);
+            
+            iconURL = getClass().getResource("AppData/updateDelete.png");
+            icon = new ImageIcon(iconURL);
+            updateDeleteTransaction = new JButton("Update/Delete Transaction", icon);
+            updateDeleteTransaction.setBackground(new Color(15, 48, 87));
+            updateDeleteTransaction.setBorder(null);
+            updateDeleteTransaction.setFont(buttonsFont);
+            updateDeleteTransaction.setForeground(Color.WHITE);
 
             iconURL = getClass().getResource("AppData/backup.png");
             icon = new ImageIcon(iconURL);
@@ -180,11 +193,13 @@ public class HomePageView
             addCustomer.setAlignmentX(Component.CENTER_ALIGNMENT);
             viewRecord.setAlignmentX(Component.CENTER_ALIGNMENT);
             addTransaction.setAlignmentX(Component.CENTER_ALIGNMENT);
+            updateDeleteTransaction.setAlignmentX(Component.CENTER_ALIGNMENT);
             backup.setAlignmentX(Component.CENTER_ALIGNMENT);
 
             addCustomer.addMouseListener(new ButtonHoverListener(addCustomer));
             viewRecord.addMouseListener(new ButtonHoverListener(viewRecord));
             addTransaction.addMouseListener(new ButtonHoverListener(addTransaction));
+            updateDeleteTransaction.addMouseListener(new ButtonHoverListener(updateDeleteTransaction));
             backup.addMouseListener(new ButtonHoverListener(backup));
 
         } catch (Exception e)
@@ -192,6 +207,7 @@ public class HomePageView
             addCustomer = new JButton("Add Customer");
             viewRecord = new JButton("View Record");
             addTransaction = new JButton("Add Transaction");
+            updateDeleteTransaction = new JButton("Update/Delete Transaction");
             backup = new JButton("Backup");
         }
 

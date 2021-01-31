@@ -32,6 +32,7 @@ public class HomePageController
     CustomerController customer;
     RecordController record;
     AddTransactionController addTransaction;
+    UpdateDeleteTransactionController updateDeleteTransaction;
     BackupController backup;
 
     public HomePageController(HomePageView view, Database dao)
@@ -50,11 +51,13 @@ public class HomePageController
         customer = new CustomerController(new CustomerModel(null, null, null, null), new CustomerView(), dao);
         record = new RecordController(new RecordView(), new RecordModel(), dao);
         addTransaction = new AddTransactionController(new AddTransactionView(), new TransactionModel(null, 0, TransactionModel.PaymentType.none, null, null), dao);
+        updateDeleteTransaction=new UpdateDeleteTransactionController(new TransactionModel(null, 0, TransactionModel.PaymentType.none, null, null), new UpdateDeleteTransactionView(), dao);
         backup = new BackupController(new BackupView(), dao);
 
         view.contentPanel.add(customer.getView(), "Add Customer");
         view.contentPanel.add(record.getView(), "View Record");
         view.contentPanel.add(addTransaction.getView(), "Add Transaction");
+        view.contentPanel.add(updateDeleteTransaction.getView(), "Update Delete Transaction");
         view.contentPanel.add(backup.getView(), "Backup");
 
         initButtonHandlers();
@@ -181,6 +184,16 @@ public class HomePageController
             {
                 CardLayout layout = (CardLayout) view.contentPanel.getLayout();
                 layout.show(view.contentPanel, "Add Transaction");
+            }
+        });
+        this.view.updateDeleteTransaction.addActionListener(new ActionListener()
+        {
+
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                CardLayout layout = (CardLayout) view.contentPanel.getLayout();
+                layout.show(view.contentPanel, "Update Delete Transaction");
             }
         });
         this.view.backup.addActionListener(new ActionListener()
