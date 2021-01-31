@@ -18,6 +18,7 @@ import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 
 /**
  *
@@ -51,7 +52,7 @@ public class HomePageController
         customer = new CustomerController(new CustomerModel(null, null, null, null), new CustomerView(), dao);
         record = new RecordController(new RecordView(), new RecordModel(), dao);
         addTransaction = new AddTransactionController(new AddTransactionView(), new TransactionModel(null, 0, TransactionModel.PaymentType.none, null, null), dao);
-        updateDeleteTransaction=new UpdateDeleteTransactionController(new TransactionModel(null, 0, TransactionModel.PaymentType.none, null, null), new UpdateDeleteTransactionView(), dao);
+        updateDeleteTransaction = new UpdateDeleteTransactionController(new TransactionModel(null, 0, TransactionModel.PaymentType.none, null, null), new UpdateDeleteTransactionView(), dao);
         backup = new BackupController(new BackupView(), dao);
 
         view.contentPanel.add(customer.getView(), "Add Customer");
@@ -87,6 +88,8 @@ public class HomePageController
 
                 record.updateCustomersInSearchBar();
                 addTransaction.updateCustomersInSearchBar();
+                updateDeleteTransaction.updateCustomersInSearchBar();
+
             }
 
         });
@@ -107,7 +110,7 @@ public class HomePageController
             }
         });
 
-        //select ccustomer of transaction panel button handler
+        //select ccustomer of add transaction panel button handler
         addTransaction.searchBarCtrl.view.viewButton.addActionListener(new ActionListener()
         {
 
@@ -119,7 +122,48 @@ public class HomePageController
                 addTransaction.view.customerName.setText(selectedCustomer);
             }
         });
+        //select customer of update delete transaction panel button handler
+        updateDeleteTransaction.searchBarCtrl.view.viewButton.addActionListener(new ActionListener()
+        {
 
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                String selectedCustomer = updateDeleteTransaction.searchBarCtrl.view.searchList.getSelectedValue();
+
+                updateDeleteTransaction.view.transactionsTable.setModel(dao.getAllTransaction(selectedCustomer));
+            }
+        });
+        //delete transaction of update delete transaction panel button handler 
+        updateDeleteTransaction.view.deleteButton.addActionListener(new ActionListener()
+        {
+
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+
+                int selectedRowToDelete = updateDeleteTransaction.view.transactionsTable.getSelectedRow();
+                JTable referenceTable = updateDeleteTransaction.view.transactionsTable;
+                String customerName = referenceTable.getValueAt(selectedRowToDelete, 0).toString();
+                String transactionDate = referenceTable.getValueAt(selectedRowToDelete, 1).toString();
+                char transactionType = referenceTable.getValueAt(selectedRowToDelete, 2).toString().charAt(0);
+
+                if (transactionType == 'B')
+                {
+                    TransactionModel model = new TransactionModel(customerName, 0, TransactionModel.PaymentType.bill, transactionDate, null);
+                    dao.deleteTransaction(model);
+                    
+                } else
+                {
+                    TransactionModel model = new TransactionModel(customerName, 0, TransactionModel.PaymentType.payment, transactionDate, null);
+                    dao.deleteTransaction(model);
+                }
+                
+                 String selectedCustomer = updateDeleteTransaction.searchBarCtrl.view.searchList.getSelectedValue();
+
+                updateDeleteTransaction.view.transactionsTable.setModel(dao.getAllTransaction(customerName));
+            }
+        });
         //add transaction button handler of transaction panel
         addTransaction.view.addTransactionButton.addActionListener(new ActionListener()
         {
@@ -151,6 +195,66 @@ public class HomePageController
 
                 }
 
+            }
+        });
+
+        //local backup button handler of backup panel
+        this.backup.view.local.addActionListener(new ActionListener()
+        {
+
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                LocalDateTime dateAndTime = LocalDateTime.now();
+
+                DateTimeFormatter formatting = DateTimeFormatter.ofPattern("dd-MM-yyyy_HH.mm");
+
+                String formattedDate = dateAndTime.format(formatting);
+
+                String path = null;
+                JFileChooser localBackupPath = new JFileChooser("./");
+                localBackupPath.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+                localBackupPath.showSaveDialog(view.frame);
+
+                File f = localBackupPath.getSelectedFile();
+                path = f.getAbsolutePath();
+                path = path.replace('\\', '/');
+
+                path += ("/" + formattedDate + "_database_backup.sql");
+
+                path = path.replace("//", "/");
+
+                try
+                {
+                    String backupCommand = "C:/xampp/mysql/bin/mysqldump.exe -uroot  --add-drop-database -B hamzaalidatabase -r" + path;
+
+                    int processComplete = -1;
+                    Process runtime = Runtime.getRuntime().exec(backupCommand);
+
+                    BufferedReader reader
+                            = new BufferedReader(new InputStreamReader(runtime.getInputStream()));
+                    while ((reader.readLine()) != null)
+                    {
+                        processComplete = runtime.waitFor();
+                        System.out.println(processComplete);
+                    }
+                    if (processComplete == -1)
+                    {
+                        URL iconURL = getClass().getResource("AppData/add.png");
+                        ImageIcon icon = new ImageIcon(iconURL);
+                        JOptionPane.showMessageDialog(view.frame, "Backup Created Succesfully", "Sussessfuly Created!", JOptionPane.OK_OPTION, icon);
+
+                    } else
+                    {
+                        JOptionPane.showMessageDialog(view.frame, "Error Creating Backup", "Backup Error!", JOptionPane.WARNING_MESSAGE);
+
+                    }
+                } catch (Exception ex)
+                {
+                    JOptionPane.showMessageDialog(view.frame, "Error Creating Backup", "Backup Error!", JOptionPane.WARNING_MESSAGE);
+
+                }
             }
         });
 
@@ -204,66 +308,6 @@ public class HomePageController
             {
                 CardLayout layout = (CardLayout) view.contentPanel.getLayout();
                 layout.show(view.contentPanel, "Backup");
-            }
-        });
-
-        this.backup.view.local.addActionListener(new ActionListener()
-        {
-
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                LocalDateTime dateAndTime = LocalDateTime.now();
-
-                DateTimeFormatter formatting = DateTimeFormatter.ofPattern("dd-MM-yyyy_HH.mm");
-
-                String formattedDate = dateAndTime.format(formatting);
-
-                String path = null;
-                JFileChooser localBackupPath = new JFileChooser("./");
-                localBackupPath.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-
-                localBackupPath.showSaveDialog(view.frame);
-
-                File f = localBackupPath.getSelectedFile();
-                path = f.getAbsolutePath();
-                path = path.replace('\\', '/');
-
-                path += ("/" + formattedDate + "_database_backup.sql");
-
-                path = path.replace("//", "/");
-
-
-                try
-                {
-                    String backupCommand = "C:/xampp/mysql/bin/mysqldump.exe -uroot  --add-drop-database -B hamzaalidatabase -r" + path;
-
-                    int processComplete=-1;
-                    Process runtime = Runtime.getRuntime().exec(backupCommand);
-                    
-                    BufferedReader reader
-                            = new BufferedReader(new InputStreamReader(runtime.getInputStream()));
-                    while ((reader.readLine()) != null)
-                    {
-                        processComplete = runtime.waitFor();
-                        System.out.println(processComplete);
-                    }
-                    if (processComplete == -1)
-                    {
-                        URL iconURL = getClass().getResource("AppData/add.png");
-                        ImageIcon icon = new ImageIcon(iconURL);
-                        JOptionPane.showMessageDialog(view.frame, "Backup Created Succesfully", "Sussessfuly Created!", JOptionPane.OK_OPTION, icon);
-
-                    } else
-                    {
-                        JOptionPane.showMessageDialog(view.frame, "Error Creating Backup", "Backup Error!", JOptionPane.WARNING_MESSAGE);
-
-                    }
-                } catch (Exception ex)
-                {
-                    JOptionPane.showMessageDialog(view.frame, "Error Creating Backup", "Backup Error!", JOptionPane.WARNING_MESSAGE);
-
-                }
             }
         });
 

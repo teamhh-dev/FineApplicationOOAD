@@ -15,6 +15,8 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.border.TitledBorder;
 
 /**
@@ -29,9 +31,10 @@ public class UpdateDeleteTransactionView extends JPanel
     Font titleFont = new Font("Calibri", Font.BOLD, 30);
     Color labelsColor = new Color(15, 48, 87);
 
-    JButton update;
-    JButton delete;
-
+    JButton updateButton;
+    JButton deleteButton;
+    JTable transactionsTable;
+    JScrollPane tableContainer;
     public UpdateDeleteTransactionView()
     {
 
@@ -48,10 +51,23 @@ public class UpdateDeleteTransactionView extends JPanel
         URL iconURL = getClass().getResource("AppData/updateDelete.png");
         ImageIcon icon = new ImageIcon(iconURL);
         
-        delete = new JButton("Add");
-        delete.setFont(titleFont);
-        delete.setBackground(labelsColor);
-        delete.setForeground(Color.WHITE);
+        transactionsTable=new JTable();
+        transactionsTable.setFont(titleFont.deriveFont(Font.PLAIN, 22));
+        transactionsTable.setRowHeight(transactionsTable.getRowHeight()+20);
+        
+        
+        tableContainer = new JScrollPane(transactionsTable);
+        
+        tableContainer.setPreferredSize(new Dimension((int) screenSize.getWidth() - 650, (int) screenSize.getHeight() - 50));
+        
+        deleteButton = new JButton("Delete");
+        deleteButton.setFont(titleFont);
+        deleteButton.setBackground(labelsColor);
+        deleteButton.setForeground(Color.WHITE);
+        
+        add(tableContainer,BorderLayout.CENTER);
+        add(deleteButton,BorderLayout.SOUTH);
+        
         
     }
 }

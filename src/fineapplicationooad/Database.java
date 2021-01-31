@@ -12,6 +12,8 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -32,10 +34,10 @@ public class Database
         try
         {
             Class.forName("com.mysql.jdbc.Driver");
-            
+
             //first configuring database if not configured
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/", "root", "");
-        
+
             statement = connection.createStatement();
             initDatabase();
 
@@ -68,7 +70,7 @@ public class Database
 
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/hamzaalidatabase", "root", "");
             statement = connection.createStatement();
-            
+
         } catch (Exception ex)
         {
             System.out.println(ex.getMessage());
@@ -164,6 +166,36 @@ public class Database
         return null;
     }
 
+    public DefaultTableModel getAllTransaction(String customerName)
+    {
+        String getTransactionsQuery = "SELECT\n"
+                + "    `customerName` AS \"Customer Name\",\n"
+                + "    DATE_FORMAT(\n"
+                + "        `transactionDateTime`,\n"
+                + "        '%M %d %Y@%H:%i'\n"
+                + "    ) AS \"Transactioon Date\",\n"
+                + "    CASE WHEN `transactionType` = 'B' THEN 'Bill' WHEN `transactionType` = 'P' THEN 'Payment'\n"
+                + "END as \"Transaction Type \",`amount` as \"Transaction Amount\",\n"
+                + "`transactionDesc` as \"Transaction Decription\"\n"
+                + "FROM\n"
+                + "    `transactions`\n"
+                + "WHERE\n"
+                + "    customerName = '" + customerName + "'\n"
+                + "ORDER BY\n"
+                + "    transactionDateTime\n"
+                + "DESC\n";
+
+        try
+        {
+            resultSet = statement.executeQuery(getTransactionsQuery);
+            return buildTableModel(resultSet);
+        } catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
     public static DefaultTableModel buildTableModel(ResultSet rs)
             throws SQLException
     {
@@ -227,7 +259,7 @@ public class Database
             try
             {
                 statement.executeUpdate(addTransactionSql);
-            } catch (SQLException ex)
+            } catch (Exception ex)
             {
                 System.out.println(ex.getMessage());
                 return false;
@@ -235,6 +267,34 @@ public class Database
             System.out.println(addTransactionSql);
         }
 
+        return true;
+    }
+
+    boolean deleteTransaction(TransactionModel model)
+    {
+        String deleteTransactionQuery
+                = "delete from transactions where "
+                + "customerName='" + model.getCustomerName() + "'"
+                + " and DATE_FORMAT(transactionDateTime,'%M %d %Y@%H:%i')=" + "DATE_FORMAT(STR_TO_DATE('" + model.getCurrentDateTime() + "','%M %d %Y@%H:%i'),'%M %d %Y@%H:%i')"
+                + "and transactionType=";
+
+        if (model.getType() == TransactionModel.PaymentType.bill)
+        {
+            deleteTransactionQuery += "'B'";
+        } else
+        {
+            deleteTransactionQuery += "'P'";
+
+        }
+        System.out.println(deleteTransactionQuery);
+        try
+        {
+            statement.execute(deleteTransactionQuery);
+        } catch (Exception ex)
+        {
+
+            return false;
+        }
         return true;
     }
 }

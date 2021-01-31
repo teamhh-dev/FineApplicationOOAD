@@ -5,21 +5,29 @@
  */
 package fineapplicationooad;
 
+import java.awt.BorderLayout;
+
 /**
  *
  * @author Hamza
  */
 public class UpdateDeleteTransactionController
 {
+
     TransactionModel model;
     UpdateDeleteTransactionView view;
     Database dao;
-
+    SearchBarController searchBarCtrl;
     public UpdateDeleteTransactionController(TransactionModel model, UpdateDeleteTransactionView view, Database dao)
     {
+        searchBarCtrl = new SearchBarController(new SearchBarView(), new SearchBarModel(), dao);
+        searchBarCtrl.view.viewButton.setText("Select");
         this.model = model;
         this.view = view;
         this.dao = dao;
+
+        view.add(searchBarCtrl.getView(), BorderLayout.WEST);
+//        this.view.
     }
 
     public Database getDao()
@@ -51,7 +59,10 @@ public class UpdateDeleteTransactionController
     {
         this.view = view;
     }
-    
-    
-    
+
+    void updateCustomersInSearchBar()
+    {
+        searchBarCtrl.updateCustomerList();
+    }
+
 }
