@@ -53,7 +53,7 @@ public class RecordView extends JPanel
         
         tableContainer = new JScrollPane(recordTable);
         
-        tableContainer.setPreferredSize(new Dimension((int) screenSize.getWidth() - 650, (int) screenSize.getHeight() - 50));
+        tableContainer.setPreferredSize(new Dimension((int) screenSize.getWidth() - 700, (int) screenSize.getHeight() - 50));
         
         add(tableContainer, BorderLayout.EAST);
 //        add(new SearchBarView(),BorderLayout.WEST);

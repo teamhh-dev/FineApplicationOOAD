@@ -47,7 +47,7 @@ public class HomePageView
     JButton updateDeleteTransaction;
     
     JButton backup;
-    int menuPanelWidth=275;
+    int menuPanelWidth=320;
     
     public HomePageView()
     {

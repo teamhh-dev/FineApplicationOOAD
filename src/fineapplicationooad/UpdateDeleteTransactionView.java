@@ -58,7 +58,7 @@ public class UpdateDeleteTransactionView extends JPanel
         
         tableContainer = new JScrollPane(transactionsTable);
         
-        tableContainer.setPreferredSize(new Dimension((int) screenSize.getWidth() - 650, (int) screenSize.getHeight() - 50));
+        tableContainer.setPreferredSize(new Dimension((int) screenSize.getWidth() - 700, (int) screenSize.getHeight() - 50));
         
         deleteButton = new JButton("Delete");
         deleteButton.setFont(titleFont);
