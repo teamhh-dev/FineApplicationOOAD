@@ -46,7 +46,7 @@ public class BackupView extends JPanel
         URL iconUrl = getClass().getResource("AppData/local.png");
         ImageIcon icon = new ImageIcon(iconUrl);
 
-        local = new JButton("Local", icon);
+        local = new JButton("Select Folder...", icon);
         local.setBorder(null);
         local.setBackground(Color.GRAY);
         local.setFont(titleFont);
