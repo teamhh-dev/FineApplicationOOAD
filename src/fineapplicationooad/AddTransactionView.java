@@ -150,8 +150,8 @@ public class AddTransactionView extends JPanel
         addTransactionButton.setForeground(Color.WHITE);
 
         transactionPanel = new JPanel();
-        transactionPanel.setPreferredSize(new Dimension((int) screenSize.getWidth() - 650, (int) screenSize.getHeight() - 50));
-        transactionPanel.setMaximumSize(new Dimension((int) screenSize.getWidth() - 650, (int) screenSize.getHeight() - 50));
+        transactionPanel.setPreferredSize(new Dimension((int) screenSize.getWidth() - 700, (int) screenSize.getHeight() - 50));
+        transactionPanel.setMaximumSize(new Dimension((int) screenSize.getWidth() - 700, (int) screenSize.getHeight() - 50));
 //        transactionPanel.setPreferredSize(transactionPanel.getPreferredSize());
 
         transactionPanel.setLayout(new BoxLayout(transactionPanel, BoxLayout.PAGE_AXIS));
