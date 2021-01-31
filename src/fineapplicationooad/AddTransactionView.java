@@ -31,7 +31,7 @@ import javax.swing.border.TitledBorder;
  *
  * @author Hamza
  */
-public class TransactionView extends JPanel
+public class AddTransactionView extends JPanel
 {
 
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -58,7 +58,7 @@ public class TransactionView extends JPanel
 
     JButton addTransactionButton;
 
-    public TransactionView()
+    public AddTransactionView()
     {
 
         initGui();

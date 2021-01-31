@@ -31,7 +31,7 @@ public class HomePageController
 
     CustomerController customer;
     RecordController record;
-    TransactionController transaction;
+    AddTransactionController addTransaction;
     BackupController backup;
 
     public HomePageController(HomePageView view, Database dao)
@@ -49,12 +49,12 @@ public class HomePageController
 
         customer = new CustomerController(new CustomerModel(null, null, null, null), new CustomerView(), dao);
         record = new RecordController(new RecordView(), new RecordModel(), dao);
-        transaction = new TransactionController(new TransactionView(), new TransactionModel(null, 0, TransactionModel.PaymentType.none, null, null), dao);
+        addTransaction = new AddTransactionController(new AddTransactionView(), new TransactionModel(null, 0, TransactionModel.PaymentType.none, null, null), dao);
         backup = new BackupController(new BackupView(), dao);
 
         view.contentPanel.add(customer.getView(), "Add Customer");
         view.contentPanel.add(record.getView(), "View Record");
-        view.contentPanel.add(transaction.getView(), "Add Transaction");
+        view.contentPanel.add(addTransaction.getView(), "Add Transaction");
         view.contentPanel.add(backup.getView(), "Backup");
 
         initButtonHandlers();
@@ -83,7 +83,7 @@ public class HomePageController
                 customer.addCustomer(customer.model);
 
                 record.updateCustomersInSearchBar();
-                transaction.updateCustomersInSearchBar();
+                addTransaction.updateCustomersInSearchBar();
             }
 
         });
@@ -105,43 +105,43 @@ public class HomePageController
         });
 
         //select ccustomer of transaction panel button handler
-        transaction.searchBarCtrl.view.viewButton.addActionListener(new ActionListener()
+        addTransaction.searchBarCtrl.view.viewButton.addActionListener(new ActionListener()
         {
 
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                String selectedCustomer = transaction.searchBarCtrl.view.searchList.getSelectedValue();
+                String selectedCustomer = addTransaction.searchBarCtrl.view.searchList.getSelectedValue();
 
-                transaction.view.customerName.setText(selectedCustomer);
+                addTransaction.view.customerName.setText(selectedCustomer);
             }
         });
 
         //add transaction button handler of transaction panel
-        transaction.view.addTransactionButton.addActionListener(new ActionListener()
+        addTransaction.view.addTransactionButton.addActionListener(new ActionListener()
         {
 
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                TransactionView view = transaction.view;
-                transaction.view.date.setText(transaction.getCurrentDate());
-                if (!((transaction.view.customerName.getText().equals("Select Customer...") || (view.description.getText().equals("")) || (view.amount.getText().equals("")))))
+                AddTransactionView view = addTransaction.view;
+                addTransaction.view.date.setText(addTransaction.getCurrentDate());
+                if (!((addTransaction.view.customerName.getText().equals("Select Customer...") || (view.description.getText().equals("")) || (view.amount.getText().equals("")))))
                 {
-                    transaction.model.setAmount(Float.parseFloat(view.amount.getText()));
-                    transaction.model.setCurrentDateTime(view.date.getText());
-                    transaction.model.setCustomerName(view.customerName.getText());
-                    transaction.model.setDescription(view.description.getText());
+                    addTransaction.model.setAmount(Float.parseFloat(view.amount.getText()));
+                    addTransaction.model.setCurrentDateTime(view.date.getText());
+                    addTransaction.model.setCustomerName(view.customerName.getText());
+                    addTransaction.model.setDescription(view.description.getText());
                     if (view.bill.isSelected())
                     {
-                        transaction.model.setType(TransactionModel.PaymentType.bill);
+                        addTransaction.model.setType(TransactionModel.PaymentType.bill);
 
                     } else
                     {
-                        transaction.model.setType(TransactionModel.PaymentType.payment);
+                        addTransaction.model.setType(TransactionModel.PaymentType.payment);
 
                     }
-                    transaction.addTransaction();
+                    addTransaction.addTransaction();
                 } else
                 {
                     JOptionPane.showMessageDialog(view, "Transaction not added! Check if every field is selected", "Error Doing Transaction!", JOptionPane.WARNING_MESSAGE);

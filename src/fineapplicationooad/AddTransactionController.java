@@ -19,10 +19,10 @@ import javax.swing.JOptionPane;
  *
  * @author Hamza
  */
-public class TransactionController
+public class AddTransactionController
 {
 
-    TransactionView view;
+    AddTransactionView view;
     TransactionModel model;
     Database dao;
     SearchBarController searchBarCtrl;
@@ -32,7 +32,7 @@ public class TransactionController
 
     String formattedDate = dateAndTime.format(formatting);
 
-    public TransactionController(TransactionView view, TransactionModel model, Database dao)
+    public AddTransactionController(AddTransactionView view, TransactionModel model, Database dao)
     {
         searchBarCtrl = new SearchBarController(new SearchBarView(), new SearchBarModel(), dao);
         searchBarCtrl.view.viewButton.setText("Select");
@@ -94,12 +94,12 @@ public class TransactionController
         this.model = model;
     }
 
-    public TransactionView getView()
+    public AddTransactionView getView()
     {
         return view;
     }
 
-    public void setView(TransactionView view)
+    public void setView(AddTransactionView view)
     {
         this.view = view;
     }
@@ -114,7 +114,7 @@ public class TransactionController
     public static void main(String[] args)
     {
 
-        TransactionController ctrl = new TransactionController(new TransactionView(), null, new Database());
+        AddTransactionController ctrl = new AddTransactionController(new AddTransactionView(), null, new Database());
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         JFrame frame = new JFrame();
         frame.setLayout(new BorderLayout());
