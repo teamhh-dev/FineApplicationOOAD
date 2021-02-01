@@ -6,6 +6,8 @@
 package fineapplicationooad;
 
 import java.awt.BorderLayout;
+import javax.swing.event.CellEditorListener;
+import javax.swing.event.ChangeEvent;
 
 /**
  *
@@ -18,6 +20,7 @@ public class UpdateDeleteTransactionController
     UpdateDeleteTransactionView view;
     Database dao;
     SearchBarController searchBarCtrl;
+
     public UpdateDeleteTransactionController(TransactionModel model, UpdateDeleteTransactionView view, Database dao)
     {
         searchBarCtrl = new SearchBarController(new SearchBarView(), new SearchBarModel(), dao);
@@ -27,6 +30,8 @@ public class UpdateDeleteTransactionController
         this.dao = dao;
 
         view.add(searchBarCtrl.getView(), BorderLayout.WEST);
+
+        
 //        this.view.
     }
 

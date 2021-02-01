@@ -19,6 +19,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.event.CellEditorListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.table.DefaultTableColumnModel;
 
 /**
  *
@@ -132,38 +135,11 @@ public class HomePageController
                 String selectedCustomer = updateDeleteTransaction.searchBarCtrl.view.searchList.getSelectedValue();
 
                 updateDeleteTransaction.view.transactionsTable.setModel(dao.getAllTransaction(selectedCustomer));
+                updateDeleteTransaction.view.transactionsTable.getTableHeader().setReorderingAllowed(false);
+
             }
         });
-        //delete transaction of update delete transaction panel button handler 
-        updateDeleteTransaction.view.deleteButton.addActionListener(new ActionListener()
-        {
 
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-
-                int selectedRowToDelete = updateDeleteTransaction.view.transactionsTable.getSelectedRow();
-                JTable referenceTable = updateDeleteTransaction.view.transactionsTable;
-                String customerName = referenceTable.getValueAt(selectedRowToDelete, 0).toString();
-                String transactionDate = referenceTable.getValueAt(selectedRowToDelete, 1).toString();
-                char transactionType = referenceTable.getValueAt(selectedRowToDelete, 2).toString().charAt(0);
-
-                if (transactionType == 'B')
-                {
-                    TransactionModel model = new TransactionModel(customerName, 0, TransactionModel.PaymentType.bill, transactionDate, null);
-                    dao.deleteTransaction(model);
-                    
-                } else
-                {
-                    TransactionModel model = new TransactionModel(customerName, 0, TransactionModel.PaymentType.payment, transactionDate, null);
-                    dao.deleteTransaction(model);
-                }
-                
-                 String selectedCustomer = updateDeleteTransaction.searchBarCtrl.view.searchList.getSelectedValue();
-
-                updateDeleteTransaction.view.transactionsTable.setModel(dao.getAllTransaction(customerName));
-            }
-        });
         //add transaction button handler of transaction panel
         addTransaction.view.addTransactionButton.addActionListener(new ActionListener()
         {
@@ -195,6 +171,103 @@ public class HomePageController
 
                 }
 
+            }
+        });
+        //delete transaction of update delete transaction panel button handler 
+        updateDeleteTransaction.view.deleteButton.addActionListener(new ActionListener()
+        {
+
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+
+                int selectedRowToDelete = updateDeleteTransaction.view.transactionsTable.getSelectedRow();
+                JTable referenceTable = updateDeleteTransaction.view.transactionsTable;
+                String customerName = referenceTable.getValueAt(selectedRowToDelete, 0).toString();
+                String transactionDate = referenceTable.getValueAt(selectedRowToDelete, 1).toString();
+                char transactionType = referenceTable.getValueAt(selectedRowToDelete, 2).toString().charAt(0);
+                TransactionModel model;
+                if (transactionType == 'B')
+                {
+                    model = new TransactionModel(customerName, 0, TransactionModel.PaymentType.bill, transactionDate, null);
+
+                } else
+                {
+                    model = new TransactionModel(customerName, 0, TransactionModel.PaymentType.payment, transactionDate, null);
+
+                }
+
+                if (dao.deleteTransaction(model))
+                {
+                    URL iconURL = getClass().getResource("AppData/add.png");
+                    ImageIcon icon = new ImageIcon(iconURL);
+                    JOptionPane.showMessageDialog(updateDeleteTransaction.view, "Transaction  Deleted!", "Transaction Deleted!", JOptionPane.YES_OPTION, icon);
+
+                } else
+                {
+                    JOptionPane.showMessageDialog(updateDeleteTransaction.view, "Transaction not Deleted!", "Error Deleting Transaction!", JOptionPane.WARNING_MESSAGE);
+
+                }
+                String selectedCustomer = updateDeleteTransaction.searchBarCtrl.view.searchList.getSelectedValue();
+
+                updateDeleteTransaction.view.transactionsTable.setModel(dao.getAllTransaction(customerName));
+            }
+        });
+        //update transaction of update delete transaction panel button handler 
+        updateDeleteTransaction.view.updateButton.addActionListener(new ActionListener()
+        {
+
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                int selectedRowToDelete = updateDeleteTransaction.view.transactionsTable.getSelectedRow();
+                JTable referenceTable = updateDeleteTransaction.view.transactionsTable;
+//                String customerName = referenceTable.getValueAt(selectedRowToDelete, 0).toString();
+//                String transactionDate = referenceTable.getValueAt(selectedRowToDelete, 1).toString();
+//                char transactionType = referenceTable.getValueAt(selectedRowToDelete, 2).toString().charAt(0);
+//                
+
+                String customerName = referenceTable.getValueAt(referenceTable.getSelectedRow(), 0).toString();
+                String transactionDate = referenceTable.getValueAt(referenceTable.getSelectedRow(), 1).toString();
+                String transactionType = referenceTable.getValueAt(referenceTable.getSelectedRow(), 2).toString();
+                String transactionDesc = referenceTable.getValueAt(referenceTable.getSelectedRow(), 4).toString();
+
+                float transactionAmount = Float.parseFloat(referenceTable.getValueAt(referenceTable.getSelectedRow(), 3).toString());
+
+                if (transactionType.equalsIgnoreCase("Bill"))
+                {
+                    if (dao.updateTransaction(new TransactionModel(customerName, transactionAmount, TransactionModel.PaymentType.bill, transactionDate, transactionDesc)))
+                    {
+                        URL iconURL = getClass().getResource("AppData/add.png");
+                        ImageIcon icon = new ImageIcon(iconURL);
+                        JOptionPane.showMessageDialog(updateDeleteTransaction.view, "Transaction  Updated!", "Transaction Updated!", JOptionPane.YES_OPTION, icon);
+
+                    } else
+                    {
+                        JOptionPane.showMessageDialog(updateDeleteTransaction.view, "Transaction not Updated! Check if every field is correct-Otherwise Select CUstomer Transactions Again", "Error Doing Transaction Update!", JOptionPane.WARNING_MESSAGE);
+
+                    }
+
+                } else
+                {
+                    if (dao.updateTransaction(new TransactionModel(customerName, transactionAmount, TransactionModel.PaymentType.payment, transactionDate, transactionDesc)))
+                    {
+                        URL iconURL = getClass().getResource("AppData/add.png");
+                        ImageIcon icon = new ImageIcon(iconURL);
+                        JOptionPane.showMessageDialog(updateDeleteTransaction.view, "Transaction  Updated!", "Transaction Updated!", JOptionPane.YES_OPTION, icon);
+
+                    } else
+                    {
+                        JOptionPane.showMessageDialog(updateDeleteTransaction.view, "Transaction not Updated! Check if every field is correct-Otherwise Select CUstomer Transactions Again", "Error Doing Transaction Update!", JOptionPane.WARNING_MESSAGE);
+
+                    }
+                }
+                String selectedCustomer = updateDeleteTransaction.searchBarCtrl.view.searchList.getSelectedValue();
+
+                updateDeleteTransaction.view.transactionsTable.setModel(dao.getAllTransaction(customerName));
+
+//                System.out.println(transactionAmount);
+                System.out.println(referenceTable.getSelectedRow() + ":" + referenceTable.getSelectedColumn());
             }
         });
 

@@ -7,6 +7,7 @@ package fineapplicationooad;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -119,7 +120,7 @@ public class Database
     public DefaultTableModel getCustomerRecord(String customerName)
     {
         String selectCustomerRecordQuery = "SELECT\n"
-                + "    t.date,\n"
+                + "    DATE_FORMAT(t.date,'%M %d %Y@%H:%i') AS DATE,\n"
                 + "    t.Description,\n"
                 + "    CASE WHEN t.transactionType = 'B' THEN amount ELSE 0\n"
                 + "END AS BILL,\n"
@@ -130,7 +131,8 @@ public class Database
                 + "FROM\n"
                 + "    (\n"
                 + "    SELECT\n"
-                + "        DATE_FORMAT(transactionDateTime,'%M %d %Y@%H:%i') AS DATE,\n"
+//                + "        DATE_FORMAT(transactionDateTime,'%M %d %Y@%H:%i') AS DATE,\n"
+                + "        transactionDateTime AS DATE,\n"
                 + "        transactionDesc AS Description,\n"
                 + "        amount AS AMOUNT,\n"
                 + "        transactionType\n"
@@ -296,5 +298,36 @@ public class Database
             return false;
         }
         return true;
+    }
+
+    boolean updateTransaction(TransactionModel model)
+    {
+
+        try
+        {
+            PreparedStatement stmt = connection.prepareStatement("update transactions set transactionDesc=?,amount=? where customerName=?  and DATE_FORMAT(transactionDateTime,'%M %d %Y@%H:%i')=DATE_FORMAT(STR_TO_DATE(?,'%M %d %Y@%H:%i'),'%M %d %Y@%H:%i') and transactionType=?");
+            stmt.setString(1, model.getDescription());
+            stmt.setFloat(2, model.getAmount());
+            stmt.setString(3, model.getCustomerName());
+            stmt.setString(4, model.getCurrentDateTime());
+
+            if (model.getType() == TransactionModel.PaymentType.bill)
+            {
+                stmt.setString(5, "B");
+
+            } else
+            {
+                stmt.setString(5, "P");
+
+            }
+            System.out.println(stmt.toString());
+            stmt.executeUpdate();
+        } catch (Exception ex)
+        {
+            return false;
+        }
+
+        return true;
+
     }
 }
