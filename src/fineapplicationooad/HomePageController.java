@@ -44,12 +44,18 @@ public class HomePageController
         this.view = view;
         this.view.frame.setVisible(false);
         this.dao = dao;
-
+        int count=0;
         while (this.dao.databaseStatus != true)
         {
+            count=count+1;
+            
             this.dao = new Database();
             JOptionPane.showMessageDialog(this.view.frame, "No database connectivity!\nStart MySql from XAMMP'", "No database connectivity!", JOptionPane.WARNING_MESSAGE);
-
+            if(count==3)
+            {
+                System.exit(0);
+            }
+            
         }
 
         customer = new CustomerController(new CustomerModel(null, null, null, null), new CustomerView(), dao);
@@ -266,8 +272,6 @@ public class HomePageController
 
                 updateDeleteTransaction.view.transactionsTable.setModel(dao.getAllTransaction(customerName));
 
-//                System.out.println(transactionAmount);
-                System.out.println(referenceTable.getSelectedRow() + ":" + referenceTable.getSelectedColumn());
             }
         });
 
@@ -290,6 +294,10 @@ public class HomePageController
 
                 localBackupPath.showSaveDialog(view.frame);
 
+                if(path==null)
+                {
+                    return;
+                }
                 File f = localBackupPath.getSelectedFile();
                 path = f.getAbsolutePath();
                 path = path.replace('\\', '/');
@@ -310,7 +318,6 @@ public class HomePageController
                     while ((reader.readLine()) != null)
                     {
                         processComplete = runtime.waitFor();
-                        System.out.println(processComplete);
                     }
                     if (processComplete == -1)
                     {

@@ -44,7 +44,6 @@ public class Database
 
         } catch (Exception e)
         {
-            System.out.println("No Database Connectivity!");
             return;
         }
         databaseStatus = true;
@@ -151,7 +150,6 @@ public class Database
         String[][] data = null;
         try
         {
-//            System.out.println(selectCustomerRecordQuery);
             resultSet = statement.executeQuery(selectCustomerRecordQuery);
         } catch (Exception ex)
         {
@@ -242,7 +240,6 @@ public class Database
             addTransactionSql += ("'" + model.getDescription() + "')");
             try
             {
-                System.out.println(addTransactionSql);
 
                 statement.executeUpdate(addTransactionSql);
             } catch (SQLException ex)
@@ -288,7 +285,7 @@ public class Database
             deleteTransactionQuery += "'P'";
 
         }
-        System.out.println(deleteTransactionQuery);
+
         try
         {
             statement.execute(deleteTransactionQuery);
@@ -320,7 +317,7 @@ public class Database
                 stmt.setString(5, "P");
 
             }
-            System.out.println(stmt.toString());
+
             stmt.executeUpdate();
         } catch (Exception ex)
         {
